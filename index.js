@@ -3,6 +3,7 @@ const { inject, uninject } = require('powercord/injector');
 const { getModule } = require('powercord/webpack');
 const Settings = require('./Settings');
 const playing = {};
+let custom;
 module.exports = class SoundPlugin extends Plugin {
   startPlugin () {
     powercord.api.settings.registerSettings('notifSounds', {
@@ -22,9 +23,6 @@ module.exports = class SoundPlugin extends Plugin {
   }
 
   reload (sounds) {
-    uninject('reeee-playSound');
-    uninject('reeee-createSound');
-    uninject('reeee-audio');
     this.settings.set('notifsounds', sounds);
     this._inject(sounds);
   }
@@ -36,7 +34,6 @@ module.exports = class SoundPlugin extends Plugin {
      *   volume: 0.4
      * } };
      */
-    let custom;
     if (sounds) {
       custom = sounds;
     }

@@ -64,7 +64,7 @@ module.exports = class Settings extends React.Component {
                         this.state.notifsounds[sound] = { url: value,
                           volume: 0.4 };
                         this._set('notifsounds', this.state.notifsounds);
-                        this.state.plugin.reload(this.state.notifsounds);
+                        this.state.plugin.reload();
                       }}
                       className='nf-textarea-notifsounds'
                       style={{ height: '33px' }}
