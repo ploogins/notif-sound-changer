@@ -2,7 +2,7 @@ const { Plugin } = require('powercord/entities');
 const { inject, uninject } = require('powercord/injector');
 const { getModule } = require('powercord/webpack');
 const Settings = require('./Settings');
-const playing = {};
+let playing;
 let custom;
 module.exports = class SoundPlugin extends Plugin {
   startPlugin () {
