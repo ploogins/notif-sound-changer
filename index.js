@@ -43,7 +43,6 @@ module.exports = class SoundPlugin extends Plugin {
     if (!custom) {
       custom = await this.settings.get('notifsounds');
     }
-    console.log(custom);
     if (custom) {
       const SoundPlayer = await getModule([ 'playSound' ]);
       const CreateSound = await getModule([ 'createSound' ]);
@@ -51,7 +50,6 @@ module.exports = class SoundPlugin extends Plugin {
       const getCurrentUser = await getModule([ 'getCurrentUser' ]);
       const { getCalls } = await getModule([ 'getCalls' ]);
       const play = (type) => {
-        console.log(type);
         const audio = new Audio();
         audio.pause();
         audio.src = custom[type].url;
@@ -62,7 +60,6 @@ module.exports = class SoundPlugin extends Plugin {
         if (playing[type]) {
           return;
         }
-        console.log(type);
         const audio = new Audio();
         audio.pause();
         audio.src = custom[type].url;
@@ -77,7 +74,6 @@ module.exports = class SoundPlugin extends Plugin {
         playing[type] = audio;
       };
       inject('reeee-playSound', SoundPlayer, 'playSound', e => {
-        console.log(e);
         if (custom[e[0]] && custom[e[0]].url !== '') {
           play(e[0]);
           return false;
@@ -85,7 +81,6 @@ module.exports = class SoundPlugin extends Plugin {
         return e;
       }, true);
       inject('reeee-createSound', CreateSound, 'createSound', e => {
-        console.log(e);
         if (custom[e[0]] && custom[e[0]].url !== '') {
           play(e[0]);
           return [ '' ];
@@ -96,9 +91,7 @@ module.exports = class SoundPlugin extends Plugin {
       CallHandler.terminate();
       // const debouncedPlay = global._.debounce(play, 100);
       inject('reeee-audio', CallHandler, 'handleRingUpdate', e => {
-        console.log(e);
         const call = getCalls().filter((x) => x.ringing.length > 0);
-        console.log(call);
         if (call[0]) {
           if (call[0].ringing[0] === getCurrentUser.getCurrentUser().id && custom.call_ringing) {
             playOnce('call_ringing');
@@ -108,7 +101,6 @@ module.exports = class SoundPlugin extends Plugin {
             playOnce('call_calling');
             return false;
           }
-          console.log('start');
         }
         if (playing.call_ringing) {
           playing.call_ringing.pause();
@@ -118,15 +110,12 @@ module.exports = class SoundPlugin extends Plugin {
           playing.call_calling.pause();
           delete playing.call_calling;
         }
-        console.log('stop');
 
         return e;
       }, true);
 
 
       CallHandler.initialize();
-      console.log(getCurrentUser.getCurrentUser().id)
-      console.log(CallHandler);
     }
   }
 };
