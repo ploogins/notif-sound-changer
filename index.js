@@ -24,7 +24,7 @@ module.exports = class SoundPlugin extends Plugin {
 
   reload (sounds) {
     this.settings.set('notifsounds', sounds);
-    this._inject(sounds);
+    custom = sounds;
   }
 
   async _inject (sounds) {
