@@ -43,6 +43,7 @@ module.exports = class SoundPlugin extends Plugin {
     if (!custom) {
       custom = await this.settings.get('notifsounds');
     }
+    console.log(custom);
     if (custom) {
       const SoundPlayer = await getModule([ 'playSound' ]);
       const CreateSound = await getModule([ 'createSound' ]);
@@ -74,16 +75,16 @@ module.exports = class SoundPlugin extends Plugin {
         playing[type] = audio;
       };
       inject('reeee-playSound', SoundPlayer, 'playSound', e => {
-        if (custom[e[0]] && custom[e[0]].url !== '') {
+        if (custom[e[0]] && custom[e[0]].url) {
           play(e[0]);
           return false;
         }
         return e;
       }, true);
       inject('reeee-createSound', CreateSound, 'createSound', e => {
-        if (custom[e[0]] && custom[e[0]].url !== '') {
+        if (custom[e[0]] && custom[e[0]].url) {
           play(e[0]);
-          return [ '' ];
+          return [ '' ]; // workaround to prevent errors
         }
         return e;
       }, true);

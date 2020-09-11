@@ -1,6 +1,6 @@
 const { React } = require('powercord/webpack');
 const { getModule, getModuleByDisplayName } = require('powercord/webpack');
-const { SwitchItem, TextInput } = require('powercord/components/settings');
+const { TextInput, SliderInput } = require('powercord/components/settings');
 const path = require('path');
 
 module.exports = class Settings extends React.Component {
@@ -10,7 +10,8 @@ module.exports = class Settings extends React.Component {
     const get = props.getSetting;
     this.state = {
       notifsounds: get('notifsounds', {}),
-      plugin: powercord.pluginManager.get(__dirname.split(path.sep).pop())
+      plugin: powercord.pluginManager.get(__dirname.split(path.sep).pop()),
+      playing: {}
     };
   }
 
@@ -52,7 +53,7 @@ module.exports = class Settings extends React.Component {
           Notification Sounds
         </h5> */}
         <div className='description-3_Ncsb formText-3fs7AJ marginBottom20-32qID7 modeDefault-3a2Ph1 primary-jw0I4K'>
-          Customize notification sounds. You can put a link to an MP3 file in the textbox, or leave it blank to play the default sound.
+          Customize notification sounds. You can put a link to an MP3 file in the textbox, or leave it blank to play the default sound. Use the slider to adjust the volume(only works on custom sounds).
         </div>
         {Object.keys(Sounds)
           .map((sound) =>
@@ -65,16 +66,55 @@ module.exports = class Settings extends React.Component {
                 </Text>
               </div>
 
-              <div style={{ float: 'right' }}>
-                <div style={{ float: 'left' }}>
-                  <button onClick={() => playSound(sound)} className='nf-notification-sounds-icon button-1Pkqso iconButton-eOTKg4 button-38aScr lookOutlined-3sRXeN colorWhite-rEQuAQ buttonSize-2Pmk-w iconButtonSize-U9SCYe grow-q77ONN'/>
+              <div style={{ float: 'right',
+                width: '70%' }}>
+                <div className='nf-setting-value-container' style={{ float: 'left' }}>
+                  <button onClick={() => {
+                    if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
+                      playSound(sound);
+                      return
+                    }
+                    if (this.state.playing[sound]) {
+                      this.state.playing[sound].pause();
+                      delete this.state.playing[sound];
+                    } else {
+                      // eslint-disable-next-line new-cap
+                      const player = new Audio(this.state.notifsounds[sound].url);
+                      player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : 0.5;
+                      player.play();
+                      this.state.playing[sound] = player;
+                    }
+                  }} className='nf-notification-sounds-icon button-1Pkqso iconButton-eOTKg4 button-38aScr lookOutlined-3sRXeN colorWhite-rEQuAQ buttonSize-2Pmk-w iconButtonSize-U9SCYe grow-q77ONN'/>
                 </div>
-                <div style={{ float: 'right',
-                  paddingLeft: '16px' }}>
+                <div className='nf-slider-container nf-setting-value-container' style={{ float: 'left',
+                  width: '30%' }}>
+                  <SliderInput
+                    initialValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
+                    minValue={0}
+                    maxValue={100}
+                    className='nf-slider'
+                    // onMarkerRender={marker => `${marker} ${Messages.SMART_TYPERS.USERS}`}
+                    defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
+                    onValueChange={(value) => {
+                      if (!this.state.notifsounds[sound]) {
+                        this.state.notifsounds[sound] = {};
+                      }
+                      this.state.notifsounds[sound].volume = value / 100;
+                      this._set('notifsounds', this.state.notifsounds);
+                      this.state.plugin.reload(this.state.notifsounds);
+                    }}
+                  ></SliderInput>
+                </div>
+                <div className='nf-setting-value-container' style={{ float: 'left' }}>
                   <TextInput
                     onChange={(value) => {
-                      this.state.notifsounds[sound] = { url: value,
-                        volume: 1 };
+                      if (!this.state.notifsounds[sound]) {
+                        this.state.notifsounds[sound] = {};
+                      }
+                      this.state.notifsounds[sound].url = value;
+                      if (this.state.notifsounds[sound].url === '') {
+                        delete this.state.notifsounds[sound];
+                      }
                       this._set('notifsounds', this.state.notifsounds);
                       this.state.plugin.reload(this.state.notifsounds);
                     }}
