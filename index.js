@@ -26,7 +26,7 @@ module.exports = class SoundPlugin extends Plugin {
     uninject('reeee-createSound');
     uninject('reeee-audio');
     this.settings.set('notifsounds', sounds);
-    custom = sounds;
+    this._inject(sounds);
   }
 
   async _inject (sounds) {
