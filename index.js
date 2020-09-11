@@ -22,6 +22,7 @@ module.exports = class SoundPlugin extends Plugin {
   }
 
   reload (sounds) {
+    console.log('reload', sounds);
     uninject('reeee-playSound');
     uninject('reeee-createSound');
     uninject('reeee-audio');
@@ -74,6 +75,7 @@ module.exports = class SoundPlugin extends Plugin {
         playing[type] = audio;
       };
       inject('reeee-playSound', SoundPlayer, 'playSound', e => {
+        console.log(e);
         if (custom[e[0]] && custom[e[0]].url !== '') {
           play(e[0]);
           return false;
@@ -81,6 +83,7 @@ module.exports = class SoundPlugin extends Plugin {
         return e;
       }, true);
       inject('reeee-createSound', CreateSound, 'createSound', e => {
+        console.log(e);
         if (custom[e[0]] && custom[e[0]].url !== '') {
           play(e[0]);
           return [ '' ];
@@ -91,6 +94,7 @@ module.exports = class SoundPlugin extends Plugin {
       CallHandler.terminate();
       // const debouncedPlay = global._.debounce(play, 100);
       inject('reeee-audio', CallHandler, 'handleRingUpdate', e => {
+        console.log(e);
         const call = getCalls().filter((x) => x.ringing.length > 0);
         if (call[0]) {
           if (call[0].ringing[0] === getCurrentUser.getCurrentUser().id && custom.call_ringing) {
@@ -114,7 +118,7 @@ module.exports = class SoundPlugin extends Plugin {
         return e;
       }, true);
 
-
+      console.log(custom);
       CallHandler.initialize();
     }
   }
