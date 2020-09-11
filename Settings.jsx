@@ -61,7 +61,7 @@ module.exports = class Settings extends React.Component {
                   <TextInput
                     onChange={(value) => {
                       this.state.notifsounds[sound] = { url: value,
-                        volume: 0.4 };
+                        volume: 1 };
                       this._set('notifsounds', this.state.notifsounds);
                       this.state.plugin.reload(this.state.notifsounds);
                     }}
