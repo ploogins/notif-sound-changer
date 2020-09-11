@@ -65,7 +65,7 @@ module.exports = class SoundPlugin extends Plugin {
         audio.pause();
         audio.src = custom[type].url;
         audio.loop = true;
-        audio.volume = 0.1 || custom[type].volume;
+        audio.volume = 0.4 || custom[type].volume;
         audio.play();
         /*
          * if (playing.call_ringing) {
