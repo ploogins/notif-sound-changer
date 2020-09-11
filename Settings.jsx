@@ -43,7 +43,8 @@ module.exports = class Settings extends React.Component {
       stream_started: 'Stream Started',
       stream_stopped: 'Stream Stopped',
       stream_user_joined: 'Viewer Join',
-      stream_user_left: 'Viewer Leave'
+      stream_user_left: 'Viewer Leave',
+      discodo: 'Discodo Easter Egg'
     };
     return (
       <this.state.VerticalScroller>
