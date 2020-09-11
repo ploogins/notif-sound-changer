@@ -54,7 +54,7 @@ module.exports = class SoundPlugin extends Plugin {
         const audio = new Audio();
         audio.pause();
         audio.src = custom[type].url;
-        audio.volume = custom[type].volume || 0.5;
+        audio.volume = custom[type].volume ?? 0.5;
         audio.play();
       };
       const playOnce = (type) => {
@@ -65,7 +65,7 @@ module.exports = class SoundPlugin extends Plugin {
         audio.pause();
         audio.src = custom[type].url;
         audio.loop = true;
-        audio.volume = custom[type].volume || 0.5;
+        audio.volume = custom[type].volume ?? 0.5;
         audio.play();
         /*
          * if (playing.call_ringing) {
