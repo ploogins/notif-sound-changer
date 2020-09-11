@@ -29,9 +29,21 @@ module.exports = class Settings extends React.Component {
     const { Text, playSound } = this.state;
     const Sounds = {
       message1: 'Message',
-      call_ringing: 'Incoming Call',
-      call_calling: 'Outgoing Call',
-      user_join: 'User Joining Voice Channel'
+      deafen: 'Deafen',
+      undeafen: 'Undeafen',
+      mute: 'Mute',
+      unmute: 'Unmute',
+      disconnect: 'Voice Disconnected',
+      ptt_start: 'PTT Activate',
+      ptt_stop: 'PTT Deactivate',
+      user_join: 'User Join',
+      user_leave: 'User Leave',
+      call_calling: 'Outgoing Ring',
+      call_ringing: 'Incoming Ring',
+      stream_started: 'Stream Started',
+      stream_stopped: 'Stream Stopped',
+      stream_user_joined: 'Viewer Join',
+      stream_user_left: 'Viewer Leave'
     };
     return (
       <this.state.VerticalScroller>
