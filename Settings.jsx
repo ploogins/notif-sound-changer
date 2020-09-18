@@ -82,6 +82,9 @@ module.exports = class Settings extends React.Component {
                       const player = new Audio(this.state.notifsounds[sound].url);
                       player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : 0.5;
                       player.play();
+                      player.addEventListener('ended', (event) => {
+                        delete this.state.playing[sound];
+                      });
                       this.state.playing[sound] = player;
                     }
                   }} className='nf-notification-sounds-icon button-1Pkqso iconButton-eOTKg4 button-38aScr lookOutlined-3sRXeN colorWhite-rEQuAQ buttonSize-2Pmk-w iconButtonSize-U9SCYe grow-q77ONN'/>
