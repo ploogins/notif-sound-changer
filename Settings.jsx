@@ -10,7 +10,6 @@ module.exports = class Settings extends React.Component {
     const get = props.getSetting;
     this.state = {
       notifsounds: get('notifsounds', {}),
-      plugin: powercord.pluginManager.get(__dirname.split(path.sep).pop()),
       playing: {}
     };
   }
@@ -72,7 +71,7 @@ module.exports = class Settings extends React.Component {
                   <button onClick={() => {
                     if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
                       playSound(sound);
-                      return
+                      return;
                     }
                     if (this.state.playing[sound]) {
                       this.state.playing[sound].pause();
@@ -103,8 +102,7 @@ module.exports = class Settings extends React.Component {
                         this.state.notifsounds[sound] = {};
                       }
                       this.state.notifsounds[sound].volume = value / 100;
-                      this._set('notifsounds', this.state.notifsounds);
-                      this.state.plugin.reload(this.state.notifsounds);
+                      this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
                   ></SliderInput>
                 </div>
@@ -118,8 +116,7 @@ module.exports = class Settings extends React.Component {
                       if (this.state.notifsounds[sound].url === '') {
                         delete this.state.notifsounds[sound];
                       }
-                      this._set('notifsounds', this.state.notifsounds);
-                      this.state.plugin.reload(this.state.notifsounds);
+                      this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
                     className='nf-textarea-notifsounds'
                     style={{ height: '33px' }}
@@ -133,14 +130,5 @@ module.exports = class Settings extends React.Component {
         }
       </this.state.VerticalScroller>
     );
-  }
-
-  _set (key, value, defaultValue) {
-    if (!value && defaultValue) {
-      value = defaultValue;
-    }
-
-    this.props.updateSetting(key, value);
-    this.setState({ [key]: value });
   }
 };
