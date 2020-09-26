@@ -47,7 +47,6 @@ module.exports = class Settings extends React.Component {
       discodo: 'Discodo Easter Egg'
     };
     return (
-      console.log(this.state.notifsounds)
       <this.state.VerticalScroller>
         {/* <h5 className='h5-18_1nd title-3sZWYQ size12-3R0845 height16-2Lv3qA weightSemiBold-NJexzi marginBottom8-AtZOdT'>
           Notification Sounds
@@ -103,7 +102,7 @@ module.exports = class Settings extends React.Component {
                         this.state.notifsounds[sound] = {};
                       }
                       this.state.notifsounds[sound].volume = value / 100;
-                      this.props.updateSetting('notifsounds', this.state.notifsounds );
+                      this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
                   ></SliderInput>
                 </div>
