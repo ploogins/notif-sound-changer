@@ -53,7 +53,8 @@ module.exports = class SoundPlugin extends Plugin {
       playing[type] = audio;
     };
     inject('reeee-playSound', SoundPlayer, 'playSound', (e) => {
-      this.custom = this.settings.get('notifsounds', {});
+      this.custom = this.settings.get('notifsounds', false);
+      console.log(this.custom);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
         return false;
@@ -61,7 +62,7 @@ module.exports = class SoundPlugin extends Plugin {
       return e;
     }, true);
     inject('reeee-createSound', CreateSound, 'createSound', (e) => {
-      this.custom = this.settings.get('notifsounds', {});
+      this.custom = this.settings.get('notifsounds', false);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
         return [ '' ]; // workaround to prevent errors
@@ -71,7 +72,7 @@ module.exports = class SoundPlugin extends Plugin {
 
     CallHandler.terminate();
     inject('reeee-audio', CallHandler, 'handleRingUpdate', (e) => {
-      this.custom = this.settings.get('notifsounds', {}, false);
+      this.custom = this.settings.get('notifsounds', false);
       const call = getCalls().filter((x) => x.ringing.length > 0);
       if (call[0]) {
         if (call[0].ringing[0] === getCurrentUser.getCurrentUser().id && this.custom.call_ringing) {
