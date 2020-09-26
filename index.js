@@ -54,7 +54,6 @@ module.exports = class SoundPlugin extends Plugin {
     };
     inject('reeee-playSound', SoundPlayer, 'playSound', (e) => {
       this.custom = this.settings.get('notifsounds', false);
-      console.log(this.custom);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
         return false;
