@@ -9,7 +9,7 @@ module.exports = class Settings extends React.Component {
 
     const get = props.getSetting;
     this.state = {
-      notifsounds: get('notifsounds', {}),
+      notifsounds: get('ringtoner', {}).notifsounds,
       playing: {}
     };
   }
