@@ -14,7 +14,7 @@ module.exports = class Settings extends React.Component {
     };
   }
 
-  async componentDidMount () {
+  async componentDidMount () {  
     this.setState({
       VerticalScroller: (await getModule([ 'AdvancedScrollerThin' ])).AdvancedScrollerThin,
       Text: await getModuleByDisplayName('Text'),
@@ -23,6 +23,7 @@ module.exports = class Settings extends React.Component {
   }
 
   render () {
+    console.log(this.state.notifsounds)
     if (!this.state.VerticalScroller) {
       return null;
     }
