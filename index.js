@@ -5,8 +5,8 @@ const Settings = require('./Settings');
 const playing = {};
 module.exports = class SoundPlugin extends Plugin {
   startPlugin () {
-    powercord.api.settings.registerSettings('notifSounds', {
-      category: 'notifSounds',
+    powercord.api.settings.registerSettings('ringtoner', {
+      category: 'ringtoner',
       label: 'Notification Sounds',
       render: Settings
     });
@@ -18,7 +18,7 @@ module.exports = class SoundPlugin extends Plugin {
     uninject('reeee-playSound');
     uninject('reeee-createSound');
     uninject('reeee-audio');
-    powercord.api.settings.unregisterSettings('notifSounds');
+    powercord.api.settings.unregisterSettings('ringtoner');
   }
 
   async _inject () {
