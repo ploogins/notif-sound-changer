@@ -102,7 +102,7 @@ module.exports = class Settings extends React.Component {
                         this.state.notifsounds[sound] = {};
                       }
                       this.state.notifsounds[sound].volume = value / 100;
-                      this.props.updateSetting('notifsounds', this.state.notifsounds);
+                      this.props.updateSetting('ringtoner', { notifsounds: this.state.notifsounds });
                     }}
                   ></SliderInput>
                 </div>
@@ -116,7 +116,7 @@ module.exports = class Settings extends React.Component {
                       if (this.state.notifsounds[sound].url === '') {
                         delete this.state.notifsounds[sound];
                       }
-                      this.props.updateSetting('notifsounds', this.state.notifsounds);
+                      this.props.updateSetting('ringtoner', { notifsounds: this.state.notifsounds });
                     }}
                     className='nf-textarea-notifsounds'
                     style={{ height: '33px' }}
