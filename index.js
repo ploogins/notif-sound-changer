@@ -3,7 +3,7 @@ const { inject, uninject } = require('powercord/injector');
 const { getModule } = require('powercord/webpack');
 const Settings = require('./Settings');
 const playing = {};
-module.exports = class SoundPlugin extends Plugin {
+module.exports = class NotificationSounds extends Plugin {
   startPlugin () {
     powercord.api.settings.registerSettings('ringtoner', {
       category: 'ringtoner',
