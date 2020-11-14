@@ -15,9 +15,10 @@ module.exports = class SoundPlugin extends Plugin {
   }
 
   pluginWillUnload () {
-    uninject('reeee-playSound');
-    uninject('reeee-createSound');
-    uninject('reeee-audio');
+    uninject('ns-playSound');
+    uninject('ns-createSound');
+    uninject('ns-call');
+    uninject('ns-isDisabled');
     powercord.api.settings.unregisterSettings('ringtoner');
   }
 
@@ -29,8 +30,8 @@ module.exports = class SoundPlugin extends Plugin {
      * } };
      */
     const SoundPlayer = await getModule([ 'playSound' ]);
-    const CreateSound = await getModule([ 'createSound' ]);
     const CallHandler = await getModule([ 'handleRingUpdate' ]);
+    const isDisabled = await getModule([ 'isSoundDisabled' ]);
     const getCurrentUser = await getModule([ 'getCurrentUser' ]);
     const { getCalls } = await getModule([ 'getCalls' ]);
     const play = (type) => {
@@ -52,7 +53,7 @@ module.exports = class SoundPlugin extends Plugin {
       audio.play();
       playing[type] = audio;
     };
-    inject('reeee-playSound', SoundPlayer, 'playSound', (e) => {
+    inject('ns-playSound', SoundPlayer, 'playSound', (e) => {
       this.custom = this.settings.get('notifsounds', false);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
@@ -60,27 +61,25 @@ module.exports = class SoundPlugin extends Plugin {
       }
       return e;
     }, true);
-    inject('reeee-createSound', CreateSound, 'createSound', (e) => {
-      this.custom = this.settings.get('notifsounds', false);
-      if (this.custom[e[0]] && this.custom[e[0]].url) {
-        play(e[0]);
-        return [ '' ]; // workaround to prevent errors
-      }
-      return e;
-    }, true);
 
     CallHandler.terminate();
-    inject('reeee-audio', CallHandler, 'handleRingUpdate', (e) => {
+    /*
+     * inject('ns-call-reset', CallHandler, 'handleRingUpdate', (_, e) => {
+     *   console.log(_, e);
+     *   return false;
+     * }, false);
+     */
+    inject('ns-call', CallHandler, 'handleRingUpdate', (e) => {
       this.custom = this.settings.get('notifsounds', false);
       const call = getCalls().filter((x) => x.ringing.length > 0);
       if (call[0]) {
         if (call[0].ringing[0] === getCurrentUser.getCurrentUser().id && this.custom.call_ringing) {
           playOnce('call_ringing');
-          return false;
+          return e;
         }
         if (this.custom.call_calling) {
           playOnce('call_calling');
-          return false;
+          return e;
         }
       }
       if (playing.call_ringing) {
@@ -93,6 +92,14 @@ module.exports = class SoundPlugin extends Plugin {
       }
       return e;
     }, true);
+
+    inject('ns-isDisabled', isDisabled, 'isSoundDisabled', (e, r) => {
+      if ((e[0] === 'call_calling' || e[0] === 'call_ringing') && this.custom[e[0]]) {
+        return true;
+      }
+      return r;
+    }, false);
+
     CallHandler.initialize();
   }
 };

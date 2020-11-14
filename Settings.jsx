@@ -1,7 +1,7 @@
 const { React } = require('powercord/webpack');
 const { getModule, getModuleByDisplayName } = require('powercord/webpack');
 const { TextInput, SliderInput } = require('powercord/components/settings');
-const path = require('path');
+const { Button, Text } = require('powercord/components');
 
 module.exports = class Settings extends React.Component {
   constructor (props) {
@@ -17,17 +17,16 @@ module.exports = class Settings extends React.Component {
   async componentDidMount () {
     this.setState({
       VerticalScroller: (await getModule([ 'AdvancedScrollerThin' ])).AdvancedScrollerThin,
-      Text: await getModuleByDisplayName('Text'),
       playSound: (await getModule([ 'playSound' ])).playSound
     });
   }
 
   render () {
-    console.log(this.state.notifsounds)
+    console.log(this.state.notifsounds);
     if (!this.state.VerticalScroller) {
       return null;
     }
-    const { Text, playSound } = this.state;
+    const { VerticalScroller, playSound } = this.state;
     const Sounds = {
       message1: 'Message',
       deafen: 'Deafen',
@@ -48,7 +47,7 @@ module.exports = class Settings extends React.Component {
       discodo: 'Discodo Easter Egg'
     };
     return (
-      <this.state.VerticalScroller>
+      <VerticalScroller>
         {/* <h5 className='h5-18_1nd title-3sZWYQ size12-3R0845 height16-2Lv3qA weightSemiBold-NJexzi marginBottom8-AtZOdT'>
           Notification Sounds
         </h5> */}
@@ -57,19 +56,16 @@ module.exports = class Settings extends React.Component {
         </div>
         {Object.keys(Sounds)
           .map((sound) =>
-            <div className='nf-notification-sounds' style={{ marginBottom: '16px' }}>
-              <div style={{ float: 'left' }}>
-                <Text className='title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
-                  <label className='title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
-                    {Sounds[sound]}
-                  </label>
-                </Text>
-              </div>
+            <div className='nf-notification-sounds'>
+              <Text className='nf-sound-title title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
+                <label className='title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
+                  {Sounds[sound]}
+                </label>
+              </Text>
 
-              <div style={{ float: 'right',
-                width: '70%' }}>
-                <div className='nf-setting-value-container' style={{ float: 'left' }}>
-                  <button onClick={() => {
+              <div className='nf-setting-value-container'>
+                <div className='nf-button-container nf-setting-value'>
+                  <Button onClick={() => {
                     if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
                       playSound(sound);
                       return;
@@ -78,7 +74,7 @@ module.exports = class Settings extends React.Component {
                       this.state.playing[sound].pause();
                       delete this.state.playing[sound];
                     } else {
-                      // eslint-disable-next-line new-cap
+                    // eslint-disable-next-line new-cap
                       const player = new Audio(this.state.notifsounds[sound].url);
                       player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : 0.5;
                       player.play();
@@ -87,10 +83,10 @@ module.exports = class Settings extends React.Component {
                       });
                       this.state.playing[sound] = player;
                     }
-                  }} className='nf-notification-sounds-icon button-1Pkqso iconButton-eOTKg4 button-38aScr lookOutlined-3sRXeN colorWhite-rEQuAQ buttonSize-2Pmk-w iconButtonSize-U9SCYe grow-q77ONN'/>
+                  }} className='nf-notification-sounds-icon'/>
+                  <div className='divider-3573oO dividerDefault-3rvLe-'/>
                 </div>
-                <div className='nf-slider-container nf-setting-value-container' style={{ float: 'left',
-                  width: '30%' }}>
+                <div className='nf-slider-container nf-setting-value'>
                   <SliderInput
                     initialValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
                     minValue={0}
@@ -98,16 +94,16 @@ module.exports = class Settings extends React.Component {
                     className='nf-slider'
                     // onMarkerRender={marker => `${marker} ${Messages.SMART_TYPERS.USERS}`}
                     defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
-                    onValueChange={(value) => {
+                    onValueChange={_.debounce((value) => {
                       if (!this.state.notifsounds[sound]) {
                         this.state.notifsounds[sound] = {};
                       }
                       this.state.notifsounds[sound].volume = value / 100;
                       this.props.updateSetting('notifsounds', this.state.notifsounds);
-                    }}
+                    }, 500)}
                   ></SliderInput>
                 </div>
-                <div className='nf-setting-value-container' style={{ float: 'left' }}>
+                <div className='nf-setting-value'>
                   <TextInput
                     onChange={(value) => {
                       if (!this.state.notifsounds[sound]) {
@@ -120,7 +116,6 @@ module.exports = class Settings extends React.Component {
                       this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
                     className='nf-textarea-notifsounds'
-                    style={{ height: '33px' }}
                     placeholder='Link to MP3 file'
                     defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].url : ''}
                   />
@@ -129,7 +124,7 @@ module.exports = class Settings extends React.Component {
             </div>
           )
         }
-      </this.state.VerticalScroller>
+      </VerticalScroller>
     );
   }
 };

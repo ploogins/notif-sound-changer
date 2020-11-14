@@ -1,31 +1,42 @@
 
 .nf-notification-sounds {
-    width: auto !important;
-    padding-bottom: 64px;
+   height: auto;
+   width: auto;
+   display: flex;
+   flex-direction: row;
+   overflow: hidden;
  }
  
  .nf-notification-sounds-icon {
     background: url('https://canary.discordapp.com/assets/f9b93aa0d9985bd2b678da58ed0d75d2.svg') 50% no-repeat !important;
-    width: auto;
-    height: auto;
  }
- 
- .nf-notification-sounds > div > div > div > .divider-3573oO.marginTop20-3TxNs6 {
-    display: none;
- }
-
  .nf-slider {
     margin-top: 0px;
  }
 
- .nf-slider-container > :first-child {
-   margin-top: -5px;
-   &> .divider-3573oO {
-      margin-top: 18px;
-   }
+ .nf-button-container {
+   vertical-align: center;
 }
 
+ .nf-slider-container {
+    width: 20%;
+ }
+
+
 .nf-setting-value-container {
-   padding-left: 10px;
-   padding-right: 10px;
+   flex-grow: 4;
+   display: inline-flex;
+   justify-content: flex-end;
+   vertical-align: center;
+   height: 70px;
+}
+.nf-setting-value {
+   margin-right: 10px;
+   margin-left: 10px;
+   height: 70px;
+   align-items: center;
+}
+
+.nf-sound-title {
+   overflow: visible;
 }
