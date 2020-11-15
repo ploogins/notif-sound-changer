@@ -76,7 +76,7 @@ module.exports = class Settings extends React.Component {
                     } else {
                     // eslint-disable-next-line new-cap
                       const player = new Audio(this.state.notifsounds[sound].url);
-                      player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : 0.5;
+                      player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume || 0.5 : 0.5;
                       player.play();
                       player.addEventListener('ended', (event) => {
                         delete this.state.playing[sound];
