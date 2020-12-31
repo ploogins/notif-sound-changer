@@ -34,6 +34,9 @@ module.exports = class NotificationSounds extends Plugin {
     const isDisabled = await getModule([ 'isSoundDisabled' ]);
     const getCurrentUser = await getModule([ 'getCurrentUser' ]);
     const { getCalls } = await getModule([ 'getCalls' ]);
+
+    const settings = powercord.api.settings.buildCategoryObject('ringtoner'); // This fixes... quite a lot for whatever reason
+
     const play = (type) => {
       const audio = new Audio();
       audio.pause();
@@ -54,7 +57,7 @@ module.exports = class NotificationSounds extends Plugin {
       playing[type] = audio;
     };
     inject('ns-playSound', SoundPlayer, 'playSound', (e) => {
-      this.custom = this.settings.get('notifsounds', false);
+      this.custom = settings.get('notifsounds', false);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
         return false;
@@ -70,7 +73,7 @@ module.exports = class NotificationSounds extends Plugin {
      * }, false);
      */
     inject('ns-call', CallHandler, 'handleRingUpdate', (e) => {
-      this.custom = this.settings.get('notifsounds', false);
+      this.custom = settings.get('notifsounds', false);
       const call = getCalls().filter((x) => x.ringing.length > 0);
       if (call[0]) {
         if (call[0].ringing[0] === getCurrentUser.getCurrentUser().id && this.custom.call_ringing) {
