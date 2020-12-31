@@ -6,7 +6,7 @@ const playing = {};
 module.exports = class NotificationSounds extends Plugin {
   startPlugin () {
     powercord.api.settings.registerSettings('ringtoner', {
-      category: this.entityID,
+      category: 'notif-sound-changer',
       label: 'Notification Sounds',
       render: Settings
     });
@@ -19,7 +19,7 @@ module.exports = class NotificationSounds extends Plugin {
     uninject('ns-createSound');
     uninject('ns-call');
     uninject('ns-isDisabled');
-    powercord.api.settings.unregisterSettings(this.entityID);
+    powercord.api.settings.unregisterSettings('notif-sound-changer');
   }
 
   async _inject () {
