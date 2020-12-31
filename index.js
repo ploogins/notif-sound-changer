@@ -5,7 +5,7 @@ const Settings = require('./Settings');
 const playing = {};
 module.exports = class NotificationSounds extends Plugin {
   startPlugin () {
-    powercord.api.settings.registerSettings('ringtoner', {
+    powercord.api.settings.registerSettings('notif-sound-changer', {
       category: 'notif-sound-changer',
       label: 'Notification Sounds',
       render: Settings
