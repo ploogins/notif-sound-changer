@@ -88,12 +88,12 @@ module.exports = class Settings extends React.Component {
                 </div>
                 <div className='nf-slider-container nf-setting-value'>
                   <SliderInput
-                    initialValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
+                    initialValue={this.state.notifsounds[sound] ? (this.state.notifsounds[sound].volume || 0.5) * 100 : 50}
                     minValue={0}
                     maxValue={100}
                     className='nf-slider'
                     // onMarkerRender={marker => `${marker} ${Messages.SMART_TYPERS.USERS}`}
-                    defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume * 100 : 50}
+                    defaultValue={this.state.notifsounds[sound] ? (this.state.notifsounds[sound].volume || 0.5) * 100 : 50}
                     onValueChange={_.debounce((value) => {
                       if (!this.state.notifsounds[sound]) {
                         this.state.notifsounds[sound] = {};
@@ -110,6 +110,7 @@ module.exports = class Settings extends React.Component {
                         this.state.notifsounds[sound] = {};
                       }
                       this.state.notifsounds[sound].url = value;
+                      this.state.notifsounds[sound].volume = this.state.notifsounds[sound].volume || 0.5;
                       if (this.state.notifsounds[sound].url === '') {
                         delete this.state.notifsounds[sound];
                       }
