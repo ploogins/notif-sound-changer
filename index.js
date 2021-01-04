@@ -35,7 +35,7 @@ module.exports = class NotificationSounds extends Plugin {
     const getCurrentUser = await getModule([ 'getCurrentUser' ]);
     const { getCalls } = await getModule([ 'getCalls' ]);
 
-    const settings = powercord.api.settings.buildCategoryObject('ringtoner'); // This fixes... quite a lot for whatever reason
+    const settings = powercord.api.settings.buildCategoryObject('notif-sound-changer'); // This fixes... quite a lot for whatever reason
 
     const play = (type) => {
       const audio = new Audio();
