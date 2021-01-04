@@ -1,5 +1,5 @@
 const { React } = require('powercord/webpack');
-const { getModule, getModuleByDisplayName } = require('powercord/webpack');
+const { getModule } = require('powercord/webpack');
 const { TextInput, SliderInput } = require('powercord/components/settings');
 const { Button, Text } = require('powercord/components');
 
@@ -22,7 +22,6 @@ module.exports = class Settings extends React.Component {
   }
 
   render () {
-    console.log(this.state.notifsounds);
     if (!this.state.VerticalScroller) {
       return null;
     }
@@ -38,13 +37,14 @@ module.exports = class Settings extends React.Component {
       ptt_stop: 'PTT Deactivate',
       user_join: 'User Join',
       user_leave: 'User Leave',
+      user_moved: 'User Moved',
       call_calling: 'Outgoing Ring',
       call_ringing: 'Incoming Ring',
       stream_started: 'Stream Started',
       stream_stopped: 'Stream Stopped',
       stream_user_joined: 'Viewer Join',
       stream_user_left: 'Viewer Leave',
-      discodo: 'Discodo Easter Egg'
+      discodo: 'Discodo Easter Egg (not working)',
     };
     return (
       <VerticalScroller>
@@ -52,7 +52,7 @@ module.exports = class Settings extends React.Component {
           Notification Sounds
         </h5> */}
         <div className='description-3_Ncsb formText-3fs7AJ marginBottom20-32qID7 modeDefault-3a2Ph1 primary-jw0I4K'>
-          Customize notification sounds. You can put a link to an MP3 file in the textbox, or leave it blank to play the default sound. Use the slider to adjust the volume(only works on custom sounds).
+          Customize notification sounds. You can put a link to any audio file in the textbox, or leave it blank to play the default sound. Use the slider to adjust the volume (only works on custom sounds).
         </div>
         {Object.keys(Sounds)
           .map((sound) =>
@@ -117,7 +117,7 @@ module.exports = class Settings extends React.Component {
                       this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
                     className='nf-textarea-notifsounds'
-                    placeholder='Link to MP3 file'
+                    placeholder='Link to audio file'
                     defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].url : ''}
                   />
                 </div>
