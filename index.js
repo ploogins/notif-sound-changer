@@ -40,7 +40,14 @@ module.exports = class NotificationSounds extends Plugin {
     const play = (type) => {
       const audio = new Audio();
       audio.pause();
-      audio.src = this.custom[type].url;
+      if (this.custom[type].url.startsWith('http')) {
+        audio.src = this.custom[type].url;
+      } else {
+        fs.readFile(this.custom[type].url, (err, data) => {
+          if (err) console.log(err);
+          else audio.src = ('data:audio/mpeg;base64,'+data.toString('base64')); 
+        });
+      }
       audio.volume = this.custom[type].volume ?? 0.5;
       audio.play();
     };
@@ -50,7 +57,14 @@ module.exports = class NotificationSounds extends Plugin {
       }
       const audio = new Audio();
       audio.pause();
-      audio.src = this.custom[type].url;
+      if (this.custom[type].url.startsWith('http')) {
+        audio.src = this.custom[type].url;
+      } else {
+        fs.readFile(this.custom[type].url, (err, data) => {
+          if (err) console.log(err);
+          else audio.src = ('data:audio/mpeg;base64,'+data.toString('base64')); 
+        });
+      }
       audio.loop = true;
       audio.volume = this.custom[type].volume ?? 0.5;
       audio.play();
