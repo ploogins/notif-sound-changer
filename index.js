@@ -58,6 +58,7 @@ module.exports = class NotificationSounds extends Plugin {
     };
     inject('ns-playSound', SoundPlayer, 'playSound', (e) => {
       this.custom = settings.get('notifsounds', false);
+      console.log(e);
       if (this.custom[e[0]] && this.custom[e[0]].url) {
         play(e[0]);
         return false;

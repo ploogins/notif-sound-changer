@@ -41,62 +41,71 @@ module.exports = class Settings extends React.Component {
       call_calling: 'Outgoing Ring',
       call_ringing: 'Incoming Ring',
       stream_started: 'Stream Started',
-      stream_stopped: 'Stream Stopped',
+      stream_ended: 'Stream Stopped',
       stream_user_joined: 'Viewer Join',
       stream_user_left: 'Viewer Leave',
-      discodo: 'Discodo Easter Egg (not working)',
+      reconnect: 'Invited to Speak',
+      discodo: 'Discodo Easter Egg',
     };
     return (
       <VerticalScroller>
         {/* <h5 className='h5-18_1nd title-3sZWYQ size12-3R0845 height16-2Lv3qA weightSemiBold-NJexzi marginBottom8-AtZOdT'>
           Notification Sounds
         </h5> */}
-        <div className='description-3_Ncsb formText-3fs7AJ marginBottom20-32qID7 modeDefault-3a2Ph1 primary-jw0I4K'>
+        <div className='description-30xx7u formText-2ngGjI marginBottom20-315RVT modeDefault-2fEh7a primary-jw0I4K'>
           Customize notification sounds. You can put a link to any audio file in the textbox, or leave it blank to play the default sound. Use the slider to adjust the volume (only works on custom sounds).
         </div>
         {Object.keys(Sounds)
           .map((sound) =>
             <div className='nf-notification-sounds'>
-              <Text className='nf-sound-title title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
-                <label className='title-31JmR4 titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
-                  {Sounds[sound]}
-                </label>
+              <Text className='nf-sound-title title-hptVG titleDefault-a8-ZSr medium-zmzTW- size16-rrJ6ag height20-mO2eIN'>
+                <div className="vertical-3aLnqW flex-3BkGQD directionColumn-3pi1nm justifyStart-2Mwniq alignStretch-Uwowzr noWrap-hBpHBz marginBottom20-315RVT">
+                  <label className='title-3hptVG titleDefault-a8-ZSr medium-zmzTW- size16-14cGz5 height20-mO2eIN'>
+                    {Sounds[sound]}
+                  </label>
+                </div>
               </Text>
 
               <div className='nf-setting-value-container'>
                 <div className='nf-button-container nf-setting-value'>
-                  <Button onClick={() => {
-                    if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
-                      playSound(sound);
-                      return;
-                    }
-                    if (this.state.playing[sound]) {
-                      this.state.playing[sound].pause();
-                      delete this.state.playing[sound];
-                    } else {
-                    // eslint-disable-next-line new-cap
-                      const player = new Audio(this.state.notifsounds[sound].url);
-                      player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume || 0.5 : 0.5;
-                      player.play();
-                      player.addEventListener('ended', (event) => {
+                  <div className='vertical-3aLnqW flex-3BkGQD directionColumn-3pi1nm justifyStart-2Mwniq alignStretch-Uwowzr noWrap-hBpHBz marginBottom20-315RVT'>
+                    <Button onClick={() => {
+                      if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
+                        playSound(sound);
+                        return;
+                      }
+                      if (this.state.playing[sound]) {
+                        this.state.playing[sound].pause();
                         delete this.state.playing[sound];
-                      });
-                      this.state.playing[sound] = player;
+                      } else {
+                      // eslint-disable-next-line new-cap
+                        const player = new Audio(this.state.notifsounds[sound].url);
+                        player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume || 0.5 : 0.5;
+                        player.play();
+                        player.addEventListener('ended', (event) => {
+                          delete this.state.playing[sound];
+                        });
+                        this.state.playing[sound] = player;
+                      }
+                    }} className='nf-notification-sounds-icon icon-1UHTo2'/>
+                    {//<div className='divider-_0um2u dividerDefault-3C2-ws'/>
                     }
-                  }} className='nf-notification-sounds-icon'/>
-                  <div className='divider-3573oO dividerDefault-3rvLe-'/>
+                  </div>
                 </div>
                 <div className='nf-slider-container nf-setting-value'>
                   <SliderInput
-                    initialValue={this.state.notifsounds[sound] ? (this.state.notifsounds[sound].volume || 0.5) * 100 : 50}
+                    initialValue={(this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : ((sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) ? this.state.notifsounds['stream_stopped'].volume || 0.5 : 0.5)) * 100}
                     minValue={0}
                     maxValue={100}
                     className='nf-slider'
                     // onMarkerRender={marker => `${marker} ${Messages.SMART_TYPERS.USERS}`}
-                    defaultValue={this.state.notifsounds[sound] ? (this.state.notifsounds[sound].volume || 0.5) * 100 : 50}
+                    defaultValue={(this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume : ((sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) ? this.state.notifsounds['stream_stopped'].volume || 0.5 : 0.5)) * 100}
                     onValueChange={_.debounce((value) => {
                       if (!this.state.notifsounds[sound]) {
                         this.state.notifsounds[sound] = {};
+                      }
+                      if (sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) {
+                        this.state.notifsounds[sound] = this.state.notifsounds['stream_stopped'];
                       }
                       this.state.notifsounds[sound].volume = value / 100;
                       this.props.updateSetting('notifsounds', this.state.notifsounds);
@@ -109,6 +118,9 @@ module.exports = class Settings extends React.Component {
                       if (!this.state.notifsounds[sound]) {
                         this.state.notifsounds[sound] = {};
                       }
+                      if (sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) {
+                        this.state.notifsounds[sound] = this.state.notifsounds['stream_stopped'];
+                      }
                       this.state.notifsounds[sound].url = value;
                       this.state.notifsounds[sound].volume = this.state.notifsounds[sound].volume || 0.5;
                       if (this.state.notifsounds[sound].url === '') {
@@ -118,7 +130,7 @@ module.exports = class Settings extends React.Component {
                     }}
                     className='nf-textarea-notifsounds'
                     placeholder='Link to audio file'
-                    defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].url : ''}
+                    defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].url : ((sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) ? this.state.notifsounds['stream_stopped'].url : '')}
                   />
                 </div>
               </div>
