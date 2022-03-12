@@ -19,6 +19,8 @@ module.exports = class NotificationSounds extends Plugin {
     uninject('ns-createSound');
     uninject('ns-call');
     uninject('ns-isDisabled');
+    uninject('ns-showNotificationPre');
+    uninject('ns-showNotificationPost');
     powercord.api.settings.unregisterSettings('notif-sound-changer');
   }
 
@@ -34,6 +36,7 @@ module.exports = class NotificationSounds extends Plugin {
     const isDisabled = await getModule([ 'isSoundDisabled' ]);
     const getCurrentUser = await getModule([ 'getCurrentUser' ]);
     const { getCalls } = await getModule([ 'getCalls' ]);
+    const showNotification = await getModule([ 'showNotification' ]);
 
     const settings = powercord.api.settings.buildCategoryObject('notif-sound-changer'); // This fixes... quite a lot for whatever reason
 
@@ -56,6 +59,7 @@ module.exports = class NotificationSounds extends Plugin {
       audio.play();
       playing[type] = audio;
     };
+
     inject('ns-playSound', SoundPlayer, 'playSound', (e) => {
       this.custom = settings.get('notifsounds', false);
       console.log(e);
@@ -65,6 +69,33 @@ module.exports = class NotificationSounds extends Plugin {
       }
       return e;
     }, true);
+
+    // Temporary and ungodly workaround for message notifications not playing
+
+    // Prevent message sounds from playing by overwriting the 4th argument.
+    inject('ns-showNotificationPre', showNotification, 'showNotification', (args) => {
+      console.log(args)
+      if (args.length >= 4) {
+        const info = args[3];
+        if (info.sound.startsWith('message') && this.custom['message1']) {
+          return [ args[0], args[1], args[2], Object.assign(info, { playSoundIfDisabled: false, sound: null, isReplacedByNSC: true }) ];
+        }
+      }
+
+      return args;
+    }, true);
+
+    // Now play the sound provided by NSC.
+    inject('ns-showNotificationPost', showNotification, 'showNotification', (args, res) => {
+      if (args.length >= 4) {
+        const info = args[3];
+        if (info.sound == null && info.isReplacedByNSC) {
+          play('message1');
+        }
+      }
+
+      return res;
+    }, false);
 
     CallHandler.terminate();
     /*
