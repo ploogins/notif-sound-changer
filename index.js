@@ -74,7 +74,6 @@ module.exports = class NotificationSounds extends Plugin {
 
     // Prevent message sounds from playing by overwriting the 4th argument.
     inject('ns-showNotificationPre', showNotification, 'showNotification', (args) => {
-      console.log(args)
       if (args.length >= 4) {
         const info = args[3];
         if (info.sound.startsWith('message') && this.custom['message1']) {
