@@ -76,7 +76,7 @@ module.exports = class NotificationSounds extends Plugin {
     inject('ns-showNotificationPre', showNotification, 'showNotification', (args) => {
       if (args.length >= 4) {
         const info = args[3];
-        if (info.sound.startsWith('message') && this.custom['message1']) {
+        if (!!info.sound && info.sound.startsWith('message') && this.custom['message1'] && !info.isReplacedByNSC) {
           return [ args[0], args[1], args[2], Object.assign(info, { playSoundIfDisabled: false, sound: null, isReplacedByNSC: true }) ];
         }
       }
