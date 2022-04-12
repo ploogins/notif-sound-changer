@@ -41,6 +41,7 @@ module.exports = class NotificationSounds extends Plugin {
     const settings = powercord.api.settings.buildCategoryObject('notif-sound-changer'); // This fixes... quite a lot for whatever reason
 
     const play = (type) => {
+      console.log(type);
       const audio = new Audio();
       audio.pause();
       audio.src = this.custom[type].url;
@@ -74,10 +75,10 @@ module.exports = class NotificationSounds extends Plugin {
 
     // Prevent message sounds from playing by overwriting the 4th argument.
     inject('ns-showNotificationPre', showNotification, 'showNotification', (args) => {
-      if (args.length >= 4) {
-        const info = args[3];
+      if (args.length >= 5) {
+        const info = args[4];
         if (!!info.sound && info.sound.startsWith('message') && this.custom['message1'] && !info.isReplacedByNSC) {
-          return [ args[0], args[1], args[2], Object.assign(info, { playSoundIfDisabled: false, sound: null, isReplacedByNSC: true }) ];
+          return [ args[0], args[1], args[2], args[3], Object.assign(info, { playSoundIfDisabled: false, sound: null, isReplacedByNSC: true }) ];
         }
       }
 
@@ -86,8 +87,8 @@ module.exports = class NotificationSounds extends Plugin {
 
     // Now play the sound provided by NSC.
     inject('ns-showNotificationPost', showNotification, 'showNotification', (args, res) => {
-      if (args.length >= 4) {
-        const info = args[3];
+      if (args.length >= 5) {
+        const info = args[4];
         if (info.sound == null && info.isReplacedByNSC) {
           play('message1');
         }
