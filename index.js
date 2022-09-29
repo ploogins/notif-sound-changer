@@ -3,6 +3,8 @@ const { inject, uninject } = require('powercord/injector');
 const { getModule } = require('powercord/webpack');
 const Settings = require('./Settings');
 const playing = {};
+const fs = require('fs').promises;
+
 module.exports = class NotificationSounds extends Plugin {
   startPlugin () {
     powercord.api.settings.registerSettings('notif-sound-changer', {
@@ -40,21 +42,39 @@ module.exports = class NotificationSounds extends Plugin {
 
     const settings = powercord.api.settings.buildCategoryObject('notif-sound-changer'); // This fixes... quite a lot for whatever reason
 
-    const play = (type) => {
+    const play = async (type) => {
       console.log(type);
       const audio = new Audio();
       audio.pause();
-      audio.src = this.custom[type].url;
+
+      let url = this.custom[type].url;
+
+      if (url.startsWith('file:///')) {
+        const file = await fs.readFile(url.replace('file:///', ''));
+
+        url = URL.createObjectURL(new Blob([new Uint8Array(file).buffer]))
+      }
+
+      audio.src = url;
       audio.volume = this.custom[type].volume ?? 0.5;
       audio.play();
     };
-    const playOnce = (type) => {
+    const playOnce = async (type) => {
       if (playing[type]) {
         return;
       }
       const audio = new Audio();
       audio.pause();
-      audio.src = this.custom[type].url;
+
+      let url = this.custom[type].url;
+
+      if (url.startsWith('file:///')) {
+        const file = await fs.readFile(url.replace('file:///', ''));
+
+        url = URL.createObjectURL(new Blob([new Uint8Array(file).buffer]))
+      }
+
+      audio.src = url;
       audio.loop = true;
       audio.volume = this.custom[type].volume ?? 0.5;
       audio.play();

@@ -2,6 +2,7 @@ const { React } = require('powercord/webpack');
 const { getModule } = require('powercord/webpack');
 const { TextInput, SliderInput } = require('powercord/components/settings');
 const { Button, Text } = require('powercord/components');
+const fs = require('fs').promises;
 
 module.exports = class Settings extends React.Component {
   constructor (props) {
@@ -69,7 +70,7 @@ module.exports = class Settings extends React.Component {
               <div className='nf-setting-value-container'>
                 <div className='nf-button-container nf-setting-value'>
                   <div className='vertical-3aLnqW flex-3BkGQD directionColumn-3pi1nm justifyStart-2Mwniq alignStretch-Uwowzr noWrap-hBpHBz marginBottom20-315RVT'>
-                    <Button onClick={() => {
+                    <Button onClick={async () => {
                       if (!this.state.notifsounds[sound] || !this.state.notifsounds[sound].url) {
                         playSound(sound);
                         return;
@@ -79,7 +80,16 @@ module.exports = class Settings extends React.Component {
                         delete this.state.playing[sound];
                       } else {
                       // eslint-disable-next-line new-cap
-                        const player = new Audio(this.state.notifsounds[sound].url);
+
+                        let url = this.state.notifsounds[sound].url;
+
+                        if (url.startsWith('file:///')) {
+                          const file = await fs.readFile(url.replace('file:///', ''));
+
+                          url = URL.createObjectURL(new Blob([new Uint8Array(file).buffer]))
+                        }
+
+                        const player = new Audio(url);
                         player.volume = this.state.notifsounds[sound] ? this.state.notifsounds[sound].volume ?? 0.5 : 0.5;
                         player.play();
                         player.addEventListener('ended', (event) => {
@@ -128,11 +138,52 @@ module.exports = class Settings extends React.Component {
                       }
                       this.props.updateSetting('notifsounds', this.state.notifsounds);
                     }}
+                    id={`${sound}_textinput`}
                     className='nf-textarea-notifsounds'
                     placeholder='Link to audio file'
                     defaultValue={this.state.notifsounds[sound] ? this.state.notifsounds[sound].url : ((sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) ? this.state.notifsounds['stream_stopped'].url : '')}
                   />
                 </div>
+                <Button onClick={async () => {
+                  const dialog = await DiscordNative.fileManager.showOpenDialog({
+                    filters: [
+                      {
+                        name: 'Sound files',
+                        extensions: [
+                          'mp3', 'wav', 'ogg', 'flac',
+                          'aac', 'webm'
+                        ]
+                      },
+                      {
+                        name: 'All files',
+                        extensions: [ '*' ]
+                      }
+                    ]
+                  });
+
+                  if (dialog.length == 0)
+                    return;
+
+                  if (!this.state.notifsounds[sound]) {
+                    this.state.notifsounds[sound] = {};
+                  }
+                  if (sound == 'stream_ended' && this.state.notifsounds['stream_stopped']) {
+                    this.state.notifsounds[sound] = this.state.notifsounds['stream_stopped'];
+                  }
+
+                  this.state.notifsounds[sound].url = document.getElementById(`${sound}_textinput`).value = `file:///${dialog[0]}`;
+                  this.state.notifsounds[sound].volume = this.state.notifsounds[sound].volume || 0.5;
+                  if (this.state.notifsounds[sound].url === '') {
+                    delete this.state.notifsounds[sound];
+                  }
+                  this.props.updateSetting('notifsounds', this.state.notifsounds);
+                }} class="ns-button button-f2h6uQ lookBlank-21BCro colorBrand-I6CyqQ grow-2sR_-F" title="Select local file">
+                  <div class="contents-3ca1mk attachButtonInner-2mwer8">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                      <path class="attachButtonPlus-3IYelE" fill="currentColor" d="M12 2.00098C6.486 2.00098 2 6.48698 2 12.001C2 17.515 6.486 22.001 12 22.001C17.514 22.001 22 17.515 22 12.001C22 6.48698 17.514 2.00098 12 2.00098ZM17 13.001H13V17.001H11V13.001H7V11.001H11V7.00098H13V11.001H17V13.001Z"></path>
+                    </svg>
+                  </div>
+                </Button>
               </div>
             </div>
           )
